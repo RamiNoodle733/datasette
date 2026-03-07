@@ -97,6 +97,26 @@ async def test_default_deny_with_config_allow():
 
 
 @pytest.mark.asyncio
+async def test_default_deny_with_root_cookie_does_not_500_on_index_pages():
+    """Regression test for #2644: root + default_deny without config should not 500."""
+    ds = Datasette(default_deny=True)
+    ds.root_enabled = True
+    await ds.invoke_startup()
+
+    db = ds.add_memory_database("test_db_root")
+    await db.execute_write("create table test_table (id integer primary key)")
+    await ds._refresh_schemas()
+
+    cookies = {"ds_actor": ds.client.actor_cookie({"id": "root"})}
+
+    response = await ds.client.get("/", cookies=cookies)
+    assert response.status_code == 200
+
+    response = await ds.client.get("/test_db_root", cookies=cookies)
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
 async def test_default_deny_basic_permissions():
     """Test that default_deny=True denies basic permissions"""
     ds = Datasette(default_deny=True)

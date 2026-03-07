@@ -230,15 +230,22 @@ async def _build_single_action_sql(
 
         all_params.update(anon_params)
 
+        # Always define anon_rules CTE because downstream anon_* CTEs reference it.
+        # When there are no anonymous rules, use an empty relation with the expected columns.
         if anon_sqls_rewritten:
             anon_rules_union = " UNION ALL ".join(anon_sqls_rewritten)
-            query_parts.extend(
-                [
-                    "anon_rules AS (",
-                    f"  {anon_rules_union}",
-                    "),",
-                ]
+        else:
+            anon_rules_union = (
+                "SELECT NULL AS parent, NULL AS child, NULL AS allow, NULL AS reason WHERE 0"
             )
+
+        query_parts.extend(
+            [
+                "anon_rules AS (",
+                f"  {anon_rules_union}",
+                "),",
+            ]
+        )
 
     # Continue with the cascading logic
     query_parts.extend(
