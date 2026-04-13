@@ -89,3 +89,4 @@ See [Publishing data](https://docs.datasette.io/en/stable/publish.html) in the d
 ## Datasette Lite
 
 [Datasette Lite](https://lite.datasette.io/) is Datasette packaged using WebAssembly so that it runs entirely in your browser, no Python web application server required. Read more about that in the [Datasette Lite documentation](https://github.com/simonw/datasette-lite/blob/main/README.md).
+Knightwatch test commit by RamiNoodle733
