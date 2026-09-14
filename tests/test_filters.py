@@ -29,6 +29,21 @@ from datasette.utils.asgi import Request
             [2, 4, 3, 1],
         ),
         (
+            (
+                ("negative__gt", "-1"),
+                ("decimal__gte", "0.1"),
+                ("scientific__lt", "1e3"),
+                ("invalid__lte", "not-a-number"),
+            ),
+            [
+                '"decimal" >= :p0',
+                '"invalid" <= :p1',
+                '"negative" > :p2',
+                '"scientific" < :p3',
+            ],
+            [0.1, "not-a-number", -1, 1000.0],
+        ),
+        (
             (("foo__like", "2%2"), ("zax__glob", "3*")),
             ['"foo" like :p0', '"zax" glob :p1'],
             ["2%2", "3*"],
